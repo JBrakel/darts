@@ -14,6 +14,6 @@
     "classNames": ["db", "d20_p0", "d20_p1", "d6_p0", "d6_p1", "d3_p0", "d3_p1", "d11_p0", "d11_p1"]
   },
   "output": {
-    "scaleOutput": 1.0
+    "cap_id": 0
   }
 }
