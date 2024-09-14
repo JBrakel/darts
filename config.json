@@ -1,0 +1,19 @@
+{
+  "paths": {
+    "datasets": "/Users/jannisbrakel/datasets",
+    "weights": {
+      "bin": "/Users/jannisbrakel/CLionProjects/opencv/darts/weights/run_5s.bin",
+      "xml": "/Users/jannisbrakel/CLionProjects/opencv/darts/weights/run_5s.xml"
+    }
+  },
+  "project": {
+    "projectName": "darts",
+    "run": 5
+  },
+  "dataset": {
+    "classNames": ["db", "d20_p0", "d20_p1", "d6_p0", "d6_p1", "d3_p0", "d3_p1", "d11_p0", "d11_p1"]
+  },
+  "output": {
+    "scaleOutput": 1.0
+  }
+}
