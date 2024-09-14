@@ -9,7 +9,6 @@
 #include "Board.h"
 #include "Config.h"
 #include "Output.h"
-#include "Projection.h"
 #include <Openvino.h>
 #include "cvui.h"
 #include "../../../../../Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk/System/Library/Frameworks/CoreText.framework/Headers/CTFrame.h"
