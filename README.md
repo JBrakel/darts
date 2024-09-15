@@ -1,6 +1,6 @@
 # Darts
 ![](results/img1.png)
-![](results/img1.png)
+![](results/img2.png)
 ![](results/img3.png)
 ![](results/img4.png)
 ![](results/img5.png)
