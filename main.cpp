@@ -11,7 +11,6 @@
 #include "Output.h"
 #include <Openvino.h>
 #include "cvui.h"
-#include "../../../../../Applications/Xcode.app/Contents/Developer/Platforms/MacOSX.platform/Developer/SDKs/MacOSX14.5.sdk/System/Library/Frameworks/CoreText.framework/Headers/CTFrame.h"
 
 cv::Point2i mousePos(-1, -1);
 
@@ -114,7 +113,6 @@ int main() {
         int db_count = 0;
         int total_count;
 
-        // Iterate over classMap to ensure order
         for (const auto& classPair : classMap) {
             int classID = classPair.first;
 
@@ -123,54 +121,35 @@ int main() {
             if (it != pointsBoundingBoxes.end()) {
                 const std::vector<cv::Point>& points = it->second;
 
-                // Add each point to srcPoints in cv::Point2f format
                 for (const auto& point : points) {
-                    srcPoints.emplace_back(point.x, point.y);
-
-                    // Now add the corresponding point to dstPoints
-                    if (classMap[classID] == "db") {
-                        dstPoints.push_back(board.getPositionBullseye());
-                        db_count = 1;
-                    }
-                    else if (classMap[classID] == "d20_p0") {
+                    // if (classMap[classID] == "db" && db_count == 0) {
+                    //     srcPoints.emplace_back(point.x, point.y);
+                    //     dstPoints.push_back(board.getPositionBullseye());
+                    //     db_count++;
+                    // }
+                    if ((classMap[classID] == "d20_p0" || classMap[classID] == "d20_p1") && d20_count == 0) {
                         std::array<cv::Point, 4> temp = board.getPointsFromField("d", 0);
-                        dstPoints.push_back(temp[0]);
-                        d20_count = 1;
+                        srcPoints.emplace_back(point.x, point.y);
+                        dstPoints.push_back(classMap[classID] == "d20_p0" ? temp[0] : temp[1]);
+                        d20_count++;
                     }
-                    else if (classMap[classID] == "d20_p1") {
-                        std::array<cv::Point, 4> temp = board.getPointsFromField("d", 0);
-                        dstPoints.push_back(temp[1]);
-                        d20_count = 1;
-                    }
-                    else if (classMap[classID] == "d6_p0") {
+                    else if ((classMap[classID] == "d6_p0" || classMap[classID] == "d6_p1") && d6_count == 0) {
                         std::array<cv::Point, 4> temp = board.getPointsFromField("d", 6);
-                        dstPoints.push_back(temp[0]);
-                        d6_count = 1;
+                        srcPoints.emplace_back(point.x, point.y);
+                        dstPoints.push_back(classMap[classID] == "d6_p0" ? temp[0] : temp[1]);
+                        d6_count++;
                     }
-                    else if (classMap[classID] == "d6_p1") {
-                        std::array<cv::Point, 4> temp = board.getPointsFromField("d", 6);
-                        dstPoints.push_back(temp[1]);
-                        d6_count = 1;
-                    }
-                    else if (classMap[classID] == "d3_p0") {
+                    else if ((classMap[classID] == "d3_p0" || classMap[classID] == "d3_p1") && d3_count == 0) {
                         std::array<cv::Point, 4> temp = board.getPointsFromField("d", 3);
-                        dstPoints.push_back(temp[0]);
-                        d3_count = 1;
+                        srcPoints.emplace_back(point.x, point.y);
+                        dstPoints.push_back(classMap[classID] == "d3_p0" ? temp[0] : temp[1]);
+                        d3_count++;
                     }
-                    else if (classMap[classID] == "d3_p1") {
-                        std::array<cv::Point, 4> temp = board.getPointsFromField("d", 3);
-                        dstPoints.push_back(temp[1]);
-                        d3_count = 1;
-                    }
-                    else if (classMap[classID] == "d11_p0") {
+                    else if ((classMap[classID] == "d11_p0" || classMap[classID] == "d11_p1") && d11_count == 0) {
                         std::array<cv::Point, 4> temp = board.getPointsFromField("d", 11);
-                        dstPoints.push_back(temp[0]);
-                        d11_count = 1;
-                    }
-                    else if (classMap[classID] == "d11_p1") {
-                        std::array<cv::Point, 4> temp = board.getPointsFromField("d", 11);
-                        dstPoints.push_back(temp[1]);
-                        d11_count = 1;
+                        srcPoints.emplace_back(point.x, point.y);
+                        dstPoints.push_back(classMap[classID] == "d11_p0" ? temp[0] : temp[1]);
+                        d11_count++;
                     }
                 }
             }
@@ -179,7 +158,7 @@ int main() {
         total_count = d20_count + d6_count + d3_count + d11_count + db_count;
 
         cv::Mat frameWarped(frame.size(), frame.type(), cv::Scalar(0));
-        if (total_count >=4) {
+        if (total_count >= 4) {
 
             // homography
             cv::Mat frameResized(cv::Size(sizeFrameWarped,sizeFrameWarped), frame.type());
@@ -248,19 +227,19 @@ int main() {
             cv::Scalar color = cv::Scalar(255, 0, 0);
 
             for (const auto& point : points) {
-                int boxWidth = 25;
-                int boxHeight = 25 ;
+                if (std::find(srcPoints.begin(), srcPoints.end(), cv::Point2f(point.x, point.y)) != srcPoints.end()) {
+                    int boxWidth = 25;
+                    int boxHeight = 25;
+                    cv::Point topLeft(point.x - boxWidth / 2, point.y - boxHeight / 2);
+                    cv::Point bottomRight(point.x + boxWidth / 2, point.y + boxHeight / 2);
+                    cv::rectangle(frame, topLeft, bottomRight, color, 3);
 
-                cv::Point topLeft(point.x - boxWidth / 2, point.y - boxHeight / 2);
-                cv::Point bottomRight(point.x + boxWidth / 2, point.y + boxHeight / 2);
-                cv::rectangle(frame, topLeft, bottomRight, color, 3);
+                    cv::Point textPosition(topLeft.x, topLeft.y - 5);
+                    // cv::putText(frame, classMap[classID], textPosition, cv::FONT_HERSHEY_SIMPLEX, 1, color, 3);
 
-                cv::Point textPosition(topLeft.x, topLeft.y - 5);  // Shift text slightly above the top-left point
-                // cv::putText(frame, classMap[classID], textPosition, cv::FONT_HERSHEY_SIMPLEX, 1, color, 3);
-                std::cout << point << std::endl;
+                }
             }
         }
-        std::cout << " " << std::endl;
 
 
         // create gui
