@@ -1,9 +1,9 @@
 {
   "paths": {
-    "datasets": "/Users/jannisbrakel/datasets",
+    "datasets": "/Users/datasets",
     "weights": {
-      "bin": "/Users/jannisbrakel/CLionProjects/opencv/darts/weights/run_5s.bin",
-      "xml": "/Users/jannisbrakel/CLionProjects/opencv/darts/weights/run_5s.xml"
+      "bin": "/Users/CLionProjects/opencv/darts/weights/run_5s.bin",
+      "xml": "/Users/CLionProjects/opencv/darts/weights/run_5s.xml"
     }
   },
   "project": {
