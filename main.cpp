@@ -4,8 +4,8 @@
 #include <opencv2/opencv.hpp>
 #include <opencv2/highgui.hpp>
 #include <map>
-#include <vector>
 
+#include <vector>
 #include "Board.h"
 #include "Config.h"
 #include "Output.h"
@@ -13,11 +13,11 @@
 #include "cvui.h"
 
 cv::Point2i mousePos(-1, -1);
-
 cv::VideoCapture start_frame(const std::string& video_path, const int start_frame);
 cv::Mat display_frame_nr(cv::Mat& img, const int frame_number);
 void mouseCallback(int event, int x, int y, int, void*);
 std::vector<cv::Point2f> collectedPoints;
+
 
 int main() {
 
@@ -49,8 +49,8 @@ int main() {
 
     // read video
     const int cap_id = configData["output"]["cap_id"];
-    // cv::VideoCapture cap(cap_id);
-    cv::VideoCapture cap = start_frame(pathVideo,0);
+    cv::VideoCapture cap(cap_id);
+    // cv::VideoCapture cap = start_frame(pathVideo,0);
     cv::Mat frame;
 
     if (!cap.isOpened()) {
@@ -97,7 +97,6 @@ int main() {
         board.calcPointsFullBoard();
 
         // get source points
-        // detect cups and sports balls using openvino
         vino.get_detections(frame);
         class_indices = vino.get_class_indices();
         boxes = vino.get_boxes();
@@ -122,11 +121,6 @@ int main() {
                 const std::vector<cv::Point>& points = it->second;
 
                 for (const auto& point : points) {
-                    // if (classMap[classID] == "db" && db_count == 0) {
-                    //     srcPoints.emplace_back(point.x, point.y);
-                    //     dstPoints.push_back(board.getPositionBullseye());
-                    //     db_count++;
-                    // }
                     if ((classMap[classID] == "d20_p0" || classMap[classID] == "d20_p1") && d20_count == 0) {
                         std::array<cv::Point, 4> temp = board.getPointsFromField("d", 0);
                         srcPoints.emplace_back(point.x, point.y);
@@ -257,7 +251,7 @@ int main() {
         // output
         cv::imshow(outputWindowName, outputWindow);
 
-        int key = cv::waitKey(0);
+        int key = cv::waitKey(1);
         if (key == 'q') {
             break;
         }
